@@ -1423,13 +1423,18 @@ function redzlib:MakeWindow(Configs)
 		if type(File) ~= "string" then return end
 		if not readfile or not isfile then return end
 		local s, r = pcall(isfile, File)
-		
+
 		if s and r then
 			local s, _Flags = pcall(readfile, File)
-			
+
 			if s and type(_Flags) == "string" then
-				local s,r = pcall(function() return HttpService:JSONDecode(_Flags) end)
-				Flags = s and r or {}
+				local s, r = pcall(function() return HttpService:JSONDecode(_Flags) end)
+				if s and type(r) == "table" then
+					table.clear(Flags)
+					for k, v in pairs(r) do
+						Flags[k] = v                    
+					end                                  
+				end
 			end
 		end
 	end;LoadFile()
